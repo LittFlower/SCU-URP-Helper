@@ -36,7 +36,7 @@ If you do that, you can `poetry run python Main.py`. Just for you.
 
 Anyone can contribute to this repo.
 
-If you have question about this repo, just initiate a issue.
+If you have question about this repo, just initiate an issue.
 
 ## something....
 
