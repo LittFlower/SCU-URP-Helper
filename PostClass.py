@@ -3,6 +3,7 @@ from staticINF import *
 import ddddocr
 import requests
 import json
+import time
 
 
 def show_class(class_loop: dict, cnt: int) -> None:
@@ -38,7 +39,7 @@ def equal_class(choice: dict, class_loop: dict) -> bool:
     :param class_loop: the second class
     :return: Bool
     """
-    show_class(choice, 1)
+    #show_class(choice, 1)
     if choice['kcm'] == class_loop['kcm'] and \
             choice['kch'] == class_loop['kch'] and \
             choice['kxh'] == class_loop['kxh'] and \
@@ -58,7 +59,7 @@ def get_class_list(_http_main: requests.session, kcm: str) -> list:
     class_list: list = []
     query_class_data['kcm'] = kcm
     res = _http_main.get(courseSelect_url, headers=http_head)
-    # print(res.text)
+
     if res.status_code != 200 or res.text.find("自由选课") == -1:
         print_log("自由选课失败! Net Error!")
         return []
@@ -79,48 +80,34 @@ def get_class_list(_http_main: requests.session, kcm: str) -> list:
 
 
 def add_class(_http_main: requests.session) -> list:
-    """ add_class: add
-    this func can add some classes the user want to a list, and return the list to post.
-    :param _http_main: requests.session.
-    :return: a list consisting of the class.
-    """
-
-    class_list = get_class_list(_http_main, input("请输入一个课程名（关键词）"))
-
-    # 展示相关课程
-    class_count = 0  # 课程编号
-    for class_loop in class_list:
-        class_count = class_count + 1
-        show_class(class_loop, class_count)
-
-    if class_count == 0:
-        print_log("没有搜到相关课程。")
-
-    print(class_count)
-    # 选择相关课程，支持选多个
-    choice_flag: int = 0
     choice_class: list = []
+    while True:
+        class_name = input("请输入一个课程名（关键词）或输入 'done' 完成选课：")
+        if class_name.lower() == 'done':
+            break
+        
+        class_list = get_class_list(_http_main, class_name)
 
-    while choice_flag == 0:
-        choice_input: list = input("[请输入编号, 中间以英文逗号隔开]：").split(",")
+        # 展示相关课程
+        class_count = 0
+        for class_loop in class_list:
+            class_count += 1
+            show_class(class_loop, class_count)
+
+        if class_count == 0:
+            print_log("没有搜到相关课程。")
+            continue
+
+        # 选择相关课程
+        choice_input = input("[请输入编号, 中间以英文逗号隔开]：").split(",")
         for choice in choice_input:
-            if int(choice) in range(1, class_count + 1):
-                choice_class.append(class_list[int(choice) + 1])
-            else:
-                print_log("输入错误，请重新输入。")
-                break
-            choice_flag = 1
+            if choice.isdigit() and int(choice) in range(1, class_count + 1):
+                choice_class.append(class_list[int(choice) - 1])
 
     return choice_class
 
 
 def postclass(_http_main: requests.session) -> None:
-    """ postclass
-    this main func can post some classes the user want to the server.
-    :param _http_main: requests.session
-    :return: None
-    """
-
     # 自由选课
     ocr: ddddocr.DdddOcr = ddddocr.DdddOcr()
     visit: dict = {}
@@ -137,19 +124,21 @@ def postclass(_http_main: requests.session) -> None:
         try:
             data = _http_main.get(courseSelect_url, headers=http_head)
             # TODO: 写个重新登陆
-
+            time.sleep(SleepTime)
         except requests.exceptions.ConnectionError:
             print_log("网络错误")
             continue
 
         try:
             for choice in choice_class:  # 遍历选课队列
-                print_log(choice['kcm'])
                 class_list = get_class_list(_http_main, choice['kcm'])  # 获取相关课程列表
 
                 for class_loop in class_list:
                     if equal_class(class_loop, choice):
-                        if choice['bkskyl'] > 0:
+                        current_free = class_loop['bkskyl']  # 获取当前课余量
+                        print(f"当前课程: {class_loop['kcm']}, 课余量: {current_free}")
+
+                        if current_free > 0:
                             class_name = ""
                             for i in range(0, len(choice['kcm'])):
                                 class_name += str(int(hex(ord(choice['kcm'][i])).zfill(4), 16)) + ","
@@ -184,7 +173,10 @@ def postclass(_http_main: requests.session) -> None:
                                 break
                             else:
                                 print_log("错啦～")
+                        else:
+                            print_log("课余量不足，跳过此课程")
         except requests.exceptions.ConnectionError:
             print_log("网络错误！")
 
     return
+

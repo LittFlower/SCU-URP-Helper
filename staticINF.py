@@ -11,8 +11,10 @@ courseSubmit_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/che
 yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic.jpg"
 
 # 请初始化！
-UserName = ""
-PassWord = ""
+UserName = "" #账号
+PassWord = "" #密码
+MajorId = "" #专业号 例如网安是10185
+SleepTime = 1 #查找课程的间隔，单位是秒
 
 login_data = {
     "tokenValue": "",
@@ -39,7 +41,7 @@ post_class_data = {
     "dealType": 5,
     "kcIds": "",  # "课程号@课序号@计划学年"
     "kcms": "",  # 对课程名进行编码
-    "fajhh": "10574",  # 方案 id
+    "fajhh": MajorId,  # 方案 id
     "sj": "0_0",
     "kkxsh": "",
     "kclbdm": "",
