@@ -51,7 +51,7 @@ If you have question about this repo, just initiate an [issue](https://github.co
 
 Many thanks to the following projects for inspiring this project:
 
-- (Assistant of Comprehensive Educational Administration System of SCU)[https://github.com/PIKACHUIM/UrpHelps]
+- [Assistant of Comprehensive Educational Administration System of SCU](https://github.com/PIKACHUIM/UrpHelps)
 
 ## Contact
 
