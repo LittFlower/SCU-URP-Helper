@@ -47,6 +47,12 @@ If you have question about this repo, just initiate an [issue](https://github.co
 
 **For security reasons, please use English for all actions, otherwise you will not receive any reply.**
 
+## Thanks
+
+Many thanks to the following projects for inspiring this project:
+
+- (Assistant of Comprehensive Educational Administration System of SCU)[https://github.com/PIKACHUIM/UrpHelps]
+
 ## Contact
 
 you can contact me in [telegram](https://t.me/littflower)
