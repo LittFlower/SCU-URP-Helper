@@ -152,8 +152,8 @@ def postclass(_http_main: requests.session) -> None:
                                 photo.close()
                             code = ocr.classification(image)
                             # 配置 post
-                            post_class_data["kcIds"] = choice['kch'] + "@" + choice['kxh'] + "@" + choice['zxjxjhh']
-                            post_class_data["kcms"] = class_name
+                            post_class_data["kcIds"] = choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
+                            post_class_data["kcms"] = class_name + choice['kxh']
                             post_class_data["tokenValue"] = token
                             post_class_data["inputCode"] = code[-4:]
                             print_log("自动识别验证码：" + code[-4:])
@@ -165,6 +165,7 @@ def postclass(_http_main: requests.session) -> None:
                                 continue
 
                             if data.text.find("ok") != -1:
+                                # print(post_class_data)
                                 print_log(data.text)
                                 visit[post_class_data["kcIds"]] = True
                                 break
