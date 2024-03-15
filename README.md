@@ -1,4 +1,4 @@
-# SCU-Urp-Helpers
+# SCU-URP-Helper
 
 ## Warning
 
@@ -15,7 +15,7 @@
 
 ### Download
 
-- Use git to clone it. `git clone git@github.com:LittFlower/SCU-Urp-Helpers.git`
+- Use git to clone it. `git clone git@github.com:LittFlower/SCU-URP-Helper.git`
 - Or just download it directly.
 
 ### Use
