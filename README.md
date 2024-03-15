@@ -6,6 +6,11 @@
 
 **In view of the particularity of this project, the developer may stop updating or delete this repository at any time.**
 
+**This project complies with the GPL v3.0 agreement. Anyone can use this project for free. Commercial use requires permission from the project developer, otherwise it will be considered an infringement.**
+
+**This repository is for learning purposes only, all code contains only the smallest possible examples that can be used. **
+
+
 ## Quick start
 
 ### Download
@@ -17,10 +22,10 @@
 
 This project depends on some python packages as follows: 
 
-- requests
-- ddddocr
-- hashlib
-- json
+- [requests](https://pypi.org/project/requests/)
+- [ddddocr](https://pypi.org/project/ddddocr/)
+- [hashlib](https://pypi.org/project/hashlib/)
+- [json](https://pypi.org/project/pypi-json/)
 
 You should install these packages firstly if you want to run the `Main.py`.
 
@@ -34,12 +39,14 @@ If you do that, you can `poetry run python Main.py`. Just for you.
 
 ## Contribute
 
-Anyone can contribute to this repo.
+Anyone can contribute to this repo. You can commit your pr and we may merge it to main branch.
 
-If you have question about this repo, just initiate an issue.
+## Issues
 
-## something....
+If you have question about this repo, just initiate an [issue](https://github.com/LittFlower/SCU-Urp-Helpers/issues).
 
-This repository is for learning purposes only, all code contains only the smallest possible examples that can be used. 
+**For security reasons, please use English for all actions, otherwise you will not receive any reply.**
 
-Due to the developer's academic pressure and personal energy, this project will not commit to any updates.
+## Contact
+
+you can contact me in [telegram](https://t.me/littflower)
