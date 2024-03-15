@@ -8,7 +8,7 @@
 
 **This project complies with the GPL v3.0 agreement. Anyone can use this project for free. Commercial use requires permission from the project developer, otherwise it will be considered an infringement.**
 
-**This repository is for learning purposes only, all code contains only the smallest possible examples that can be used. **
+**This repository is for learning purposes only, all code contains only the smallest possible examples that can be used.**
 
 
 ## Quick start
