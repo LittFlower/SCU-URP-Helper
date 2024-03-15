@@ -1,6 +1,10 @@
+"""
+This file is the main file, which has imported userlogin and postclass.
+"""
+
+import requests
 from UserLogin import userlogin
 from PostClass import postclass
-import requests
 
 
 http_main = requests.session()
