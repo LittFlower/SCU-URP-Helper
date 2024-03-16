@@ -27,7 +27,7 @@ This project depends on some python packages as follows:
 - [hashlib](https://pypi.org/project/hashlib/)
 - [json](https://pypi.org/project/pypi-json/)
 
-You should install these packages firstly if you want to run the `Main.py`.
+You should install these packages first if you want to run the `Main.py`.
 
 Then, you should open the `staticINF.py` and edit the items about `username` and `password`.
 
