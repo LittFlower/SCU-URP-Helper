@@ -116,7 +116,7 @@ def postclass(_http_main: requests.session) -> None:
         print_log("戳啦！需要先添加课程哦～")
 
     for choice in choice_class:
-        temp = choice['kch'] + "@" + choice['kxh'] + "@" + choice['zxjxjhh']
+        temp = choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
         visit[temp] = False
 
     while verify(visit):
