@@ -13,7 +13,7 @@ yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic
 # 请初始化！
 UserName = "" #账号
 PassWord = "" #密码
-MajorId = "202403190401" #专业号 例如网安是10185
+MajorId = "" #专业号 例如网安是10185
 SleepTime = 1 #查找课程的间隔，单位是秒
 
 login_data = {

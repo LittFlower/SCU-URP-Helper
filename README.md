@@ -1,45 +1,68 @@
 # SCU-Urp-Helpers
 
+## Choose Language / 选择语言
+
+[English](README.md) | [中文](README_CN.md)
+
+---
+
 ## Warning
 
-**As long as you use this repository, you are deemed to have fully read the readme and agree to be responsible for any actions and consequences of yours, and have nothing to do with the developers of this project.**
+**By using this repository, you acknowledge that you have fully read the README and agree to take responsibility for your actions and any consequences thereof. The developers of this project are not liable for any outcomes resulting from its use.**
 
-**In view of the particularity of this project, the developer may stop updating or delete this repository at any time.**
+**Due to the nature of this project, the developer may stop updating or delete this repository at any time.**
 
-## Quick start
+## Quick Start
 
 ### Download
 
-- Use git to clone it. `git clone git@github.com:LittFlower/SCU-Urp-Helpers.git`
-- Or just download it directly.
+- Clone the repository using Git: `git clone git@github.com:LittFlower/SCU-Urp-Helpers.git`
+- Alternatively, download the repository directly.
 
-### Use
+### Dependencies
 
-This project depends on some python packages as follows: 
+This project requires the following Python packages:
 
 - requests
 - ddddocr
 - hashlib
 - json
 
-You should install these packages firstly if you want to run the `Main.py`.
+Install these packages before running `Main.py`.
 
-Then, you should open the `staticINF.py` and edit the items about `username` and `password`.
+### Configuration
 
-and last, `python Main.py`.
+1. Open `staticINF.py` and update the `username`, `password`, and `MajorId` fields with your information.
+2. Run the script: `python Main.py`.
 
-Another supported way to use is running `Main.py` in virtual env. You can use `poetry` `pdd` to control your packages.
+Another way to use the project is by running `Main.py` in a virtual environment. You can manage your packages using `poetry` or `pdd`.
 
-If you do that, you can `poetry run python Main.py`. Just for you.
+To run the script with `poetry`:
 
-## Contribute
+```bash
+poetry run python Main.py
+```
 
-Anyone can contribute to this repo.
+### Running the Script
 
-If you have question about this repo, just initiate an issue.
+After executing `python Main.py`, the system will automatically log in and navigate to the course selection page. You can search for relevant courses by entering keywords. For example, searching for "大数据" will display courses related to big data:
 
-## something....
+```plaintext
+请输入一个课程名（关键词）或输入 'done' 完成选课：大数据  
+[成功获取课表]：成功进入课表页面，正在读取教务处课表列表，请耐心等待
+1. 314011020_01 大数据分析及隐私保护 杨进*  60
+2. 402893020_01 财务大数据分析与实验 刘静*  7
+3. 402893020_02 财务大数据分析与实验 刘静*  12
+```
 
-This repository is for learning purposes only, all code contains only the smallest possible examples that can be used. 
+Then, you can enter the corresponding number to add a course to your selection list. Once you have finished selecting courses, enter `done` to start the automated course registration process.
 
-Due to the developer's academic pressure and personal energy, this project will not commit to any updates.
+## Contributing
+
+Contributions to this repository are welcome.
+
+If you have any questions or issues, please open an issue in the repository.
+
+## Note
+
+This repository is for educational purposes only. The code provided contains minimal examples intended for learning. Due to academic commitments and personal constraints, the developer does not guarantee regular updates to this project.
