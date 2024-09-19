@@ -7,14 +7,15 @@ security_check_url = "http://zhjw.scu.edu.cn/j_spring_security_check"
 captcha_url = "http://zhjw.scu.edu.cn/img/captcha.jpg"
 courseSelect_url = "http://zhjw.scu.edu.cn/student/courseSelect/courseSelect/index"
 free_course_select_url = "http://zhjw.scu.edu.cn/student/courseSelect/freeCourse/courseList"
-courseSubmit_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/checkInputCodeAndSubmit"
+courseSubmit_url = \
+    "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/checkInputCodeAndSubmit"
 yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic.jpg"
 
 # 请初始化！
-UserName = "" #账号
-PassWord = "" #密码
-MajorId = "" #专业号 例如网安是10185
-SleepTime = 10 #查找课程的间隔，单位是秒，推荐高一点安全
+UserName = ""  # 账号
+PassWord = ""  # 密码
+MajorId = ""  # 专业号 例如网安是10185 降转网安是202403190401 化学大类是10574 计算机大类是10646 化学拔尖是10587
+SleepTime = 10  # 查找课程的间隔，单位是秒，推荐高一点安全
 
 login_data = {
     "tokenValue": "",
@@ -50,7 +51,8 @@ post_class_data = {
 }
 
 http_head = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 "
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 "
                   "Safari/537.36 Edg/105.0.1343.33"
 }
 

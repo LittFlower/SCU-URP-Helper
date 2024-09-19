@@ -5,6 +5,7 @@ import requests
 import json
 import time
 
+
 def show_class(class_loop: dict, cnt: int) -> None:
     """ Show the class
     :param class_loop: a class.
@@ -38,7 +39,7 @@ def equal_class(choice: dict, class_loop: dict) -> bool:
     :param class_loop: the second class
     :return: Bool
     """
-    #show_class(choice, 1)
+    # show_class(choice, 1)
     if choice['kcm'] == class_loop['kcm'] and \
             choice['kch'] == class_loop['kch'] and \
             choice['kxh'] == class_loop['kxh'] and \
@@ -64,7 +65,8 @@ def get_class_list(_http_main: requests.session, kcm: str) -> list:
         return []
     else:
         print_log("[成功获取课表]：成功进入课表页面，正在读取教务处课表列表，请耐心等待")
-        res_post: requests.Response = _http_main.post(free_course_select_url, query_class_data, http_head)
+        res_post: requests.Response = \
+            _http_main.post(free_course_select_url, query_class_data, http_head)
 
     res_json = json.loads(res_post.text)
 
@@ -84,7 +86,7 @@ def add_class(_http_main: requests.session) -> list:
         class_name = input("请输入一个课程名（关键词）或输入 'done' 完成选课：")
         if class_name.lower() == 'done':
             break
-        
+
         class_list = get_class_list(_http_main, class_name)
 
         # 展示相关课程
@@ -141,7 +143,8 @@ def postclass(_http_main: requests.session) -> None:
                             class_name_kxh = ""
                             choice['kcm'] += "_" + choice['kxh']
                             for i in range(0, len(choice['kcm'])):
-                                class_name_kxh += str(int(hex(ord(choice['kcm'][i])).zfill(4), 16)) + ","
+                                class_name_kxh += \
+                                    str(int(hex(ord(choice['kcm'][i])).zfill(4), 16)) + ","
                             # 获得 token
                             temp = data.text.find('id=\"tokenValue\"')
                             token = data.text[temp + 23: temp + 55]
