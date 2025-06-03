@@ -27,13 +27,15 @@ This project requires the following Python packages:
 - ddddocr
 - hashlib
 - json
+- sys
 
-Install these packages before running `Main.py`.
+Install these packages before running `Main.py`, (note that some packages are built-in to Python, please distinguish them).
 
 ### Configuration
 
-1. Open `staticINF.py` and update the `username`, `password`, and `MajorId` fields with your information.
-2. Run the script: `python Main.py`.
+1. Copy (or rename) `staticINF.py.example` to `staticINF.py`. It is recommended to perform this operation again after each `git pull` to ensure the consistency of the file.
+2. Open `staticINF.py` and update the `username`, `password`, and `MajorId` field information.
+    - **Hint: If you don't know how to determine `MajorId`, please check the closed issue on the GitHub repo**
 
 Another way to use the project is by running `Main.py` in a virtual environment. You can manage your packages using `poetry` or `pdd`.
 
@@ -48,7 +50,7 @@ poetry run python Main.py
 After executing `python Main.py`, the system will automatically log in and navigate to the course selection page. You can search for relevant courses by entering keywords. For example, searching for "大数据" will display courses related to big data:
 
 ```plaintext
-请输入一个课程名（关键词）或输入 'done' 完成选课：大数据  
+请输入一个课程名（关键词）或输入 'done' 完成选课：大数据
 [成功获取课表]：成功进入课表页面，正在读取教务处课表列表，请耐心等待
 1. 314011020_01 大数据分析及隐私保护 杨进*  60
 2. 402893020_01 财务大数据分析与实验 刘静*  7

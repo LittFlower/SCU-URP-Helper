@@ -27,13 +27,18 @@
 - ddddocr
 - hashlib
 - json
+- sys
 
-在运行 `Main.py` 之前，首先安装这些包。
+在运行 `Main.py` 之前，首先安装这些包（注意，有些包是 python 内置的，请区分之）。
 
 ### 配置
 
-1. 打开 `staticINF.py` 并更新 `username`，`password` 和 `MajorId` 字段信息。
-2. 运行脚本：
+1. 复制（或者重命名） `staticINF.py.example` 为 `staticINF.py`，建议每次 `git pull` 之后重新执行此操作来确保该文件的一致性。
+2. 打开 `staticINF.py` 并更新 `username`，`password` 和 `MajorId` 字段信息。
+ - **hint: 如果你不知道怎么确定 `MajorId`，请来 github repo 看看 closed issue**
+
+3. 运行脚本：
+
 ```bash
 python Main.py
 ```
@@ -50,7 +55,7 @@ poetry run python Main.py
 执行 `python Main.py` 后，系统会自动登录并进入课程选择页面。您可以根据指引搜索相关课程。例如，搜索“大数据”会显示与大数据相关的课程：
 
 ```plaintext
-请输入一个课程名（关键词）或输入 'done' 完成选课：大数据  
+请输入一个课程名（关键词）或输入 'done' 完成选课：大数据
 [成功获取课表]：成功进入课表页面，正在读取教务处课表列表，请耐心等待
 1. 314011020_01 大数据分析及隐私保护 杨进*  60
 2. 402893020_01 财务大数据分析与实验 刘静*  7

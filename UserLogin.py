@@ -54,10 +54,11 @@ def userlogin(_http_main: requests.session) -> requests.session:
         elif res.text.find('token校验失败') != -1:
             print_log("[登录未成功]: token校验失败")
             exit(-1)  # token校验失败时，退出循环
-        elif res.text.find('退出系统') == -1:
+        # update: jwc has updated the ui.
+        elif res.text.find('去选课') == -1:
             print_log("[登录未成功]：账号密码错误")
             exit(-1)  # 账号密码错误时，退出循环
-        if res.text.find('退出系统') != -1:
+        if res.text.find('去选课') != -1:
             print_log("[已成功登录]：成功登录系统")
             return _http_main  # 登录成功，返回会话
 

@@ -10,12 +10,14 @@ free_course_select_url = "http://zhjw.scu.edu.cn/student/courseSelect/freeCourse
 courseSubmit_url = \
     "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/checkInputCodeAndSubmit"
 yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic.jpg"
+teacherEvaluate_url = "http://zhjw.scu.edu.cn/student/teachingEvaluation/newEvaluation/"
+evaluationTable_url = "http://zhjw.scu.edu.cn/student/teachingAssessment/evaluation/queryAll"
 
 # 请初始化！
 UserName = ""  # 账号
 PassWord = ""  # 密码
 MajorId = ""  # 专业号 例如网安是10185 降转网安是202403190401 化学大类是10574 计算机大类是10646 化学拔尖是10587
-SleepTime = 10  # 查找课程的间隔，单位是秒，推荐高一点安全
+SleepTime = 2  # 查找课程的间隔，单位是秒，推荐高一点安全
 
 login_data = {
     "tokenValue": "",

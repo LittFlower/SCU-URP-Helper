@@ -149,13 +149,15 @@ def postclass(_http_main: requests.session) -> None:
                             temp = data.text.find('id=\"tokenValue\"')
                             token = data.text[temp + 23: temp + 55]
                             # 获得验证码
-                            image: requests.Response.content = _http_main.get(yzmPic_url, headers=http_head).content
+                            image: requests.Response.content = \
+                                _http_main.get(yzmPic_url, headers=http_head).content
                             with open("verify.jpg", "wb") as photo:
                                 photo.write(image)
                                 photo.close()
                             code = ocr.classification(image)
                             # 配置 post
-                            post_class_data["kcIds"] = choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
+                            post_class_data["kcIds"] = \
+                                choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
                             post_class_data["kcms"] = class_name_kxh
                             post_class_data["tokenValue"] = token
                             post_class_data["inputCode"] = code[-4:]
