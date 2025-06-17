@@ -2,6 +2,8 @@
 这个文件里存放了一些会用到的 const.
 """
 
+import os
+
 login_url = "http://zhjw.scu.edu.cn/login"
 security_check_url = "http://zhjw.scu.edu.cn/j_spring_security_check"
 captcha_url = "http://zhjw.scu.edu.cn/img/captcha.jpg"
@@ -13,11 +15,11 @@ yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic
 teacherEvaluate_url = "http://zhjw.scu.edu.cn/student/teachingEvaluation/newEvaluation/"
 evaluationTable_url = "http://zhjw.scu.edu.cn/student/teachingAssessment/evaluation/queryAll"
 
-# 请初始化！
-UserName = ""  # 账号
-PassWord = ""  # 密码
-MajorId = ""  # 专业号 例如网安是10185 降转网安是202403190401 化学大类是10574 计算机大类是10646 化学拔尖是10587
-SleepTime = 2  # 查找课程的间隔，单位是秒，推荐高一点安全
+# 从环境变量读取账号信息
+UserName = os.environ["USERNAME"]  # 账号
+PassWord = os.environ["PASSWORD"]  # 密码
+MajorId = os.environ["MAJOR_ID"]  # 专业号
+SleepTime = int(os.environ["SLEEP_TIME"])  # 查找课程的间隔，单位是秒
 
 login_data = {
     "tokenValue": "",

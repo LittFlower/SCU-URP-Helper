@@ -59,6 +59,41 @@ After executing `python Main.py`, the system will automatically log in and navig
 
 Then, you can enter the corresponding number to add a course to your selection list. Once you have finished selecting courses, enter `done` to start the automated course registration process.
 
+### Email Notification Feature
+
+The script includes an optional email notification feature that will send you an email when a course is successfully selected. To use this feature:
+
+1. Enable email notifications in `run.sh`:
+```bash
+export SEND_MAIL="True"  # Set to "True" to enable email notifications
+```
+
+2. Set up email configuration in `run.sh`:
+```bash
+export SMTP_HOST="smtp.126.com"           # Email server address
+export SMTP_PORT="465"                    # Email server port
+export SMTP_USER="your_126_email@126.com" # Email address
+export SMTP_PASSWORD="your_auth_code"     # Email authorization code
+```
+
+3. Install the required Python package:
+```bash
+pip install redmail
+```
+
+4. Make sure your 126 email account has SMTP service enabled.
+
+The notification email will include:
+- Course name
+- Course ID
+- Class number
+
+Important notes:
+- You need to use the authorization code from your 126 email account, not your login password
+- If email sending fails, an error message will be printed to the console, but it won't affect the course selection process
+- By default, notifications are sent to the same email address used for SMTP
+- You can disable email notifications by setting `SEND_MAIL="False"` in `run.sh`
+
 ## Contributing
 
 Contributions to this repository are welcome.
