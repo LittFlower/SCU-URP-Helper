@@ -1,0 +1,55 @@
+name: Build Windows EXE (Nuitka)
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install nuitka zstandard ordered-set
+        shell: pwsh
+
+      - name: Build exe with Nuitka
+        run: |
+          python -m nuitka `
+            --standalone `
+            --onefile `
+            --follow-imports `
+            --windows-console-mode=win32 `
+            --output-filename=SCU-URP-Helper.exe `
+            Main.py
+        shell: pwsh
+
+      - name: Prepare artifact
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          Copy-Item -Path ".\Main.dist\SCU-URP-Helper.exe" -Destination ".\dist\SCU-URP-Helper.exe" -Force
+          Copy-Item -Path ".\config.json.example" -Destination ".\dist\config.json" -Force
+          Copy-Item -Path ".\README.md" -Destination ".\dist\README.md" -Force
+          Copy-Item -Path ".\README_CN.md" -Destination ".\dist\README_CN.md" -Force
+        shell: pwsh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCU-URP-Helper-windows
+          path: dist

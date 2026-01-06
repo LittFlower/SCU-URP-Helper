@@ -31,8 +31,9 @@
 ### 配置
 
 1. 复制（或者重命名） `staticINF.py.example` 为 `staticINF.py`，建议每次 `git pull` 之后重新执行此操作来确保该文件的一致性。
-2. 打开 `staticINF.py` 并更新 `username`，`password` 和 `MajorId` 字段信息。
- - **hint: 如果你不知道怎么确定 `MajorId`，请来 github repo 看看 closed issue**
+2. 复制（或者重命名） `config.json.example` 为 `config.json`。
+3. 打开 `config.json` 并更新 `username`，`password` 和 `major_id` 字段信息。
+ - **hint: 如果你不知道怎么确定 `major_id`，请来 github repo 看看 closed issue**
 
 3. 运行脚本：
 

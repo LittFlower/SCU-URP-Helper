@@ -5,10 +5,10 @@ import ddddocr
 
 
 def encrypt(content: str) -> str:
-    """ encrypt
-    this func will return the encrypted password by double md5.
-    :param content: the password (no encrypt).
-    :return: an encrypted password string.
+    """
+    Double-MD5 the given plaintext password and return the combined hash.
+    :param content: plaintext password.
+    :return: concatenated hash string used by URP.
     """
     magicStr = "{Urp602019}"
     res1 = hashlib.md5((content + magicStr).encode()).hexdigest()
@@ -19,10 +19,11 @@ def encrypt(content: str) -> str:
 
 
 def userlogin(_http_main: requests.session) -> requests.session:
-    """ userlogin
-    this func can log in the user account and keep it to future.
-    :param _http_main: the main http session.
-    :return: a requests session which has been updated.
+    """
+    Log in with the configured credentials, solving captcha via ddddocr, and return an authenticated session.
+    Retries on captcha errors, exits on token or credential errors.
+    :param _http_main: existing requests session to use.
+    :return: authenticated session.
     """
     ocr: ddddocr.DdddOcr = ddddocr.DdddOcr()
 
@@ -44,7 +45,6 @@ def userlogin(_http_main: requests.session) -> requests.session:
             photo.close()
         image = code_photo.content
         code = ocr.classification(image)
-        # code = input("输入图片验证码：")
         local_login = login_data.copy()
         local_login["j_username"] = UserName
         local_login["tokenValue"] = token
@@ -57,18 +57,18 @@ def userlogin(_http_main: requests.session) -> requests.session:
 
         if res.text.find('验证码错误') != -1:
             print_log("[登录未成功]：验证码不正确，自动进行下一次尝试")
-            login_attempts += 1  # 增加尝试次数
-            continue  # 继续下一次尝试
+            login_attempts += 1
+            continue
         elif res.text.find('token校验失败') != -1:
             print_log("[登录未成功]: token校验失败")
-            exit(-1)  # token校验失败时，退出循环
+            exit(-1)
         # update: jwc has updated the ui.
-        elif res.text.find('去选课') == -1:
+        elif res.text.find('用户名或密码错误!') == -1:
             # print_log(res.text)
-            print_log("[登录未成功]：账号密码错误")
-            exit(-1)  # 账号密码错误时，退出循环
-        if res.text.find('去选课') != -1:
             print_log("[已成功登录]：成功登录系统")
-            return _http_main  # 登录成功，返回会话
+            return _http_main
+        else:
+            print_log("[登录未成功]：账号密码错误")
+            exit(-1)
 
     return _http_main  # 超过尝试次数或其他原因退出循环时，返回会话

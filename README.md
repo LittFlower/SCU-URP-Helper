@@ -34,8 +34,9 @@ Install these packages before running `Main.py`, (note that some packages are bu
 ### Configuration
 
 1. Copy (or rename) `staticINF.py.example` to `staticINF.py`. It is recommended to perform this operation again after each `git pull` to ensure the consistency of the file.
-2. Open `staticINF.py` and update the `username`, `password`, and `MajorId` field information.
-    - **Hint: If you don't know how to determine `MajorId`, please check the closed issue on the GitHub repo**
+2. Copy (or rename) `config.json.example` to `config.json`.
+3. Open `config.json` and update the `username`, `password`, and `major_id` field information.
+    - **Hint: If you don't know how to determine `major_id`, please check the closed issue on the GitHub repo**
 
 Another way to use the project is by running `Main.py` in a virtual environment. You can manage your packages using `poetry` or `pdd`.
 
