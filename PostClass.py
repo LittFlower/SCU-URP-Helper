@@ -6,6 +6,15 @@ import json
 import time
 
 
+def sanitize_text(value: str) -> str:
+    if not isinstance(value, str):
+        return value
+    cleaned = value.encode("utf-8", "ignore").decode("utf-8", "ignore")
+    if cleaned != value:
+        print_log("输入包含不可编码字符，已自动清理。")
+    return cleaned
+
+
 def show_class(class_loop: dict, cnt: int) -> None:
     """ Show the class
     :param class_loop: a class.
@@ -57,7 +66,12 @@ def get_class_list(_http_main: requests.session, kcm: str) -> list:
     :return: a list of class.
     """
     class_list: list = []
-    query_class_data['kcm'] = kcm
+    clean_kcm = sanitize_text(kcm)
+    if not clean_kcm.strip():
+        print_log("课程关键词为空，跳过。")
+        return []
+    local_query = query_class_data.copy()
+    local_query['kcm'] = clean_kcm
     res = _http_main.get(courseSelect_url, headers=http_head)
 
     if res.status_code != 200 or res.text.find("自由选课") == -1:
@@ -66,16 +80,46 @@ def get_class_list(_http_main: requests.session, kcm: str) -> list:
     else:
         print_log("[成功获取课表]：成功进入课表页面，正在读取教务处课表列表，请耐心等待")
         res_post: requests.Response = \
-            _http_main.post(free_course_select_url, query_class_data, http_head)
+            _http_main.post(free_course_select_url,
+                            data=local_query,
+                            headers=http_head)
 
-    res_json = json.loads(res_post.text)
+    if res_post.status_code != 200:
+        print_log(f"获取课程列表失败，状态码: {res_post.status_code}")
+        return []
+
+    raw_text = res_post.text or ""
+    if not raw_text.strip():
+        print_log("课程列表响应为空，可能网络异常或登录过期。")
+        return []
+
+    try:
+        res_json = json.loads(raw_text)
+    except json.JSONDecodeError:
+        snippet = raw_text.strip()[:200]
+        print_log("课程列表响应不是 JSON，可能登录过期或被重定向。")
+        print_log(f"响应片段: {snippet}")
+        return []
+
+    if not isinstance(res_json, dict):
+        print_log("课程列表响应格式异常，无法解析。")
+        return []
+
+    if "rwRxkZlList" not in res_json:
+        print_log("课程列表响应缺少 rwRxkZlList 字段。")
+        return []
 
     if type(res_json['rwRxkZlList']) is str:
-        class_list = json.loads(res_json['rwRxkZlList'])
+        try:
+            class_list = json.loads(res_json['rwRxkZlList'])
+        except json.JSONDecodeError:
+            print_log("课程列表字段解析失败。")
+            return []
     elif type(res_json['rwRxkZlList']) is list:
         class_list = res_json['rwRxkZlList']
     else:
         print_log("res_tabs to list error!")
+        return []
 
     return class_list
 
@@ -83,9 +127,14 @@ def get_class_list(_http_main: requests.session, kcm: str) -> list:
 def add_class(_http_main: requests.session) -> list:
     choice_class: list = []
     while True:
-        class_name = input("请输入一个课程名（关键词）或输入 'done' 完成选课：")
-        if class_name.lower() == 'done':
+        class_name = sanitize_text(
+            input("请输入一个课程名（关键词）或输入 'done' 完成选课：")
+        )
+        if class_name.strip().lower() == 'done':
             break
+        if not class_name.strip():
+            print_log("课程关键词为空，跳过。")
+            continue
 
         class_list = get_class_list(_http_main, class_name)
 
@@ -141,10 +190,10 @@ def postclass(_http_main: requests.session) -> None:
 
                         if current_free > 0:
                             class_name_kxh = ""
-                            choice['kcm'] += "_" + choice['kxh']
-                            for i in range(0, len(choice['kcm'])):
+                            class_name = f"{choice['kcm']}_{choice['kxh']}"
+                            for i in range(0, len(class_name)):
                                 class_name_kxh += \
-                                    str(int(hex(ord(choice['kcm'][i])).zfill(4), 16)) + ","
+                                    str(int(hex(ord(class_name[i])).zfill(4), 16)) + ","
                             # 获得 token
                             temp = data.text.find('id=\"tokenValue\"')
                             token = data.text[temp + 23: temp + 55]
@@ -156,19 +205,21 @@ def postclass(_http_main: requests.session) -> None:
                                 photo.close()
                             code = ocr.classification(image)
                             # 配置 post
-                            post_class_data["kcIds"] = \
+                            local_post = post_class_data.copy()
+                            local_post["kcIds"] = \
                                 choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
-                            post_class_data["kcms"] = class_name_kxh
-                            post_class_data["tokenValue"] = token
-                            post_class_data["inputCode"] = code[-4:]
+                            local_post["kcms"] = class_name_kxh
+                            local_post["tokenValue"] = token
+                            local_post["inputCode"] = code[-4:]
                             print_log("自动识别验证码：" + code[-4:])
                             # print_log(post_class_data["kcms"])
                             # print_log(choice['kxh'])
-                            print_log(post_class_data)
+                            print_log(local_post)
 
                             try:
                                 data = _http_main.post(courseSubmit_url,
-                                                       post_class_data, http_head)
+                                                       data=local_post,
+                                                       headers=http_head)
                                 # print_log(post_class_data)
                             except requests.exceptions.ConnectionError:
                                 print_log("网络错误")
@@ -177,7 +228,7 @@ def postclass(_http_main: requests.session) -> None:
                             if data.text.find("ok") != -1:
                                 # print(post_class_data)
                                 print_log(data.text)
-                                visit[post_class_data["kcIds"]] = True
+                                visit[local_post["kcIds"]] = True
                                 break
                             elif data.text.find("错误") != -1:
                                 print_log("自动识别验证码失败，正在重新尝试")

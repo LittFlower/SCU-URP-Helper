@@ -45,11 +45,15 @@ def userlogin(_http_main: requests.session) -> requests.session:
         image = code_photo.content
         code = ocr.classification(image)
         # code = input("输入图片验证码：")
-        login_data["tokenValue"] = token
-        login_data["j_password"] = password
-        login_data["j_captcha"] = code
+        local_login = login_data.copy()
+        local_login["j_username"] = UserName
+        local_login["tokenValue"] = token
+        local_login["j_password"] = password
+        local_login["j_captcha"] = code
 
-        res = _http_main.post(security_check_url, login_data, http_head)
+        res = _http_main.post(security_check_url,
+                              data=local_login,
+                              headers=http_head)
 
         if res.text.find('验证码错误') != -1:
             print_log("[登录未成功]：验证码不正确，自动进行下一次尝试")
@@ -60,6 +64,7 @@ def userlogin(_http_main: requests.session) -> requests.session:
             exit(-1)  # token校验失败时，退出循环
         # update: jwc has updated the ui.
         elif res.text.find('去选课') == -1:
+            # print_log(res.text)
             print_log("[登录未成功]：账号密码错误")
             exit(-1)  # 账号密码错误时，退出循环
         if res.text.find('去选课') != -1:

@@ -25,11 +25,8 @@
 
 - requests
 - ddddocr
-- hashlib
-- json
-- sys
 
-在运行 `Main.py` 之前，首先安装这些包（注意，有些包是 python 内置的，请区分之）。
+在运行 `Main.py` 之前，首先安装这些包，项目目录下提供了 requirements.txt 文件a。
 
 ### 配置
 
@@ -42,13 +39,7 @@
 ```bash
 python Main.py
 ```
-另一种使用方法是通过虚拟环境运行 `Main.py`。您可以使用 `poetry` 或 `pdd` 来管理您的包。
-
-使用 `poetry` 运行脚本：
-
-```bash
-poetry run python Main.py
-```
+另一种使用方法是通过虚拟环境运行 `Main.py`。您可以使用 `pyenv` 这类工具。
 
 ### 运行脚本
 
