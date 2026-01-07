@@ -152,7 +152,9 @@ def add_class(_http_main: requests.session) -> list:
         choice_input = input("[请输入编号, 中间以英文逗号隔开]: ").split(",")
         for choice in choice_input:
             if choice.isdigit() and int(choice) in range(1, class_count + 1):
-                choice_class.append(class_list[int(choice) - 1])
+                selected = class_list[int(choice) - 1]
+                selected["kcId"] = f"{selected['kch']}_{selected['kxh']}_{selected['zxjxjhh']}"
+                choice_class.append(selected)
 
     return choice_class
 
@@ -170,8 +172,9 @@ def postclass(_http_main: requests.session) -> None:
         print_log("需要先添加课程", "ERROR")
 
     for choice in choice_class:
-        temp = choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
-        visit[temp] = False
+        visit_key = choice.get("kcId") or f"{choice['kch']}_{choice['kxh']}_{choice['zxjxjhh']}"
+        choice["kcId"] = visit_key
+        visit[visit_key] = False
 
     while verify(visit):
         try:
@@ -184,6 +187,9 @@ def postclass(_http_main: requests.session) -> None:
 
         try:
             for choice in choice_class:  # 遍历选课队列
+                visit_key = choice.get("kcId") or f"{choice['kch']}_{choice['kxh']}_{choice['zxjxjhh']}"
+                if visit.get(visit_key):
+                    continue
                 class_list = get_class_list(_http_main, choice['kcm'])  # 获取相关课程列表
 
                 for class_loop in class_list:
@@ -209,8 +215,7 @@ def postclass(_http_main: requests.session) -> None:
                             code = ocr.classification(image)
                             # 配置 post
                             local_post = post_class_data.copy()
-                            local_post["kcIds"] = \
-                                choice['kch'] + "_" + choice['kxh'] + "_" + choice['zxjxjhh']
+                            local_post["kcIds"] = visit_key
                             local_post["kcms"] = class_name_kxh
                             local_post["tokenValue"] = token
                             local_post["inputCode"] = code[-4:]
@@ -230,7 +235,7 @@ def postclass(_http_main: requests.session) -> None:
 
                             if data.text.find("ok") != -1:
                                 print_log(data.text, "SUCCESS")
-                                visit[local_post["kcIds"]] = True
+                                visit[visit_key] = True
                                 break
                             elif data.text.find("错误") != -1:
                                 print_log("自动识别验证码失败，正在重新尝试", "ERROR")

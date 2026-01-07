@@ -7,6 +7,7 @@ import json
 import os
 import random
 from datetime import datetime
+import sys
 
 login_url = "http://zhjw.scu.edu.cn/login"
 security_check_url = "http://zhjw.scu.edu.cn/j_spring_security_check"
