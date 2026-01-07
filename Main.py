@@ -8,7 +8,7 @@ from UserLogin import userlogin
 from GetMajorid import fetch_major_id
 from PostClass import postclass
 from teacherEvaluate import teacherEvaluate
-import sys
+from sys import argv, exit
 
 # staticINF.print_log("Hint: If you want to start the feature to automaticly evaluate teachers, you should pass in the parameter E.", "INFO")
 
