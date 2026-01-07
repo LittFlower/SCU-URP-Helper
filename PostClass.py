@@ -177,7 +177,7 @@ def postclass(_http_main: requests.session) -> None:
         try:
             data = _http_main.get(courseSelect_url, headers=http_head)
             # TODO: 写个重新登陆
-            time.sleep(SleepTime)
+            time.sleep(get_sleep_interval())
         except requests.exceptions.ConnectionError:
             print_log("网络错误", "ERROR")
             continue

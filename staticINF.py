@@ -5,6 +5,7 @@
 
 import json
 import os
+import random
 from datetime import datetime
 
 login_url = "http://zhjw.scu.edu.cn/login"
@@ -61,6 +62,21 @@ PassWord = _config.get("password", "")  # 密码
 MajorId = str(_config.get("major_id", ""))  # 专业号 例如网安是10185 降转网安是202403190401 化学大类是10574 计算机大类是10646 化学拔尖是10587
 # 现在 MajorId 可以自动获取了～
 SleepTime = _config.get("sleep_time", 2)  # 查找课程间隔（秒）
+SleepJitter = _config.get("sleep_jitter", 0.5)  # 查找间隔时间抖动（秒，正负浮动）
+
+def get_sleep_interval() -> float:
+    """
+    Return a jittered sleep interval to simulate real browser refresh timing.
+    Uses base SleepTime plus a uniform jitter in [-SleepJitter, SleepJitter],
+    clamped to a minimum of 0.1 seconds.
+    """
+    base = float(SleepTime) if SleepTime is not None else 0.0
+    jitter = float(SleepJitter) if SleepJitter is not None else 0.0
+    delay = base + random.uniform(-abs(jitter), abs(jitter))
+    delay = max(0.1, delay)
+    # print_log(f"本次休眠 {delay:.2f}s (基础 {base}s ± 抖动 {abs(jitter)}s)", "DEBUG")
+    return delay
+
 
 
 def _persist_config(data: dict) -> None:

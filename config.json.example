@@ -2,5 +2,6 @@
   "username": "",
   "password": "",
   "major_id": "",
-  "sleep_time": 2
+  "sleep_time": 2,
+  "sleep_jitter": 0.5
 }
