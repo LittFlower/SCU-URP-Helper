@@ -1,3 +1,4 @@
+from sys import exit
 from staticINF import *
 
 import hashlib
