@@ -1,47 +1,104 @@
-name: Build and Release
+name: Build Windows EXE (Nuitka)
 
-# 1. 触发条件：仅当推送以 'v' 开头的 tag 时触发 (如 v1.0.0)
 on:
   push:
     tags:
-      - "v*"
+      - "v*" # 仅当推送 v 开头的 tag 时触发发布 (如 v1.0.0)
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
 
-# 2. 权限设置：必须赋予写权限，否则无法创建 Release
+# 必须添加这个权限，否则无法创建 Release
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest
+
+    env:
+      NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka_cache
+
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # --- 这里是你的构建步骤 (示例) ---
-      - name: Set up Go (举例)
-        uses: actions/setup-go@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          go-version: "1.21"
+          python-version: "3.10"
+          cache: "pip"
 
-      - name: Build Binary
+      - name: Cache Nuitka Compilation
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUITKA_CACHE_DIR }}
+          key: ${{ runner.os }}-nuitka-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-nuitka-
+
+      - name: Install dependencies
         run: |
-          # 假设构建生成了一个名为 my-app 的文件
-          go build -o my-app main.go
-          # 或者打包成压缩包
-          tar -czvf my-app-linux-amd64.tar.gz my-app
-      # ----------------------------------
-      # 3. 发布 Release 步骤
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+        shell: pwsh
+
+      - name: Build exe with Nuitka
+        run: |
+          python -m nuitka `
+            --standalone `
+            --onefile `
+            --assume-yes-for-downloads `
+            --include-package-data=ddddocr `
+            --output-filename=SCU-URP-Helper.exe `
+            Main.py
+        shell: pwsh
+
+      - name: Prepare artifact folder
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          $exePath = Get-ChildItem -Recurse -Filter "SCU-URP-Helper.exe" | Select-Object -First 1
+          if (-not $exePath) { throw "Executable not found after build." }
+
+          # 复制 exe
+          Copy-Item -Path $exePath.FullName -Destination ".\dist\SCU-URP-Helper.exe" -Force
+
+          # 复制配置文件 (如果有)
+          if (Test-Path ".\config.json.example") {
+              Copy-Item -Path ".\config.json.example" -Destination ".\dist\config.json" -Force
+          }
+
+          # 复制说明文档
+          if (Test-Path ".\README.md") { Copy-Item -Path ".\README.md" -Destination ".\dist\README.md" -Force }
+          if (Test-Path ".\README_CN.md") { Copy-Item -Path ".\README_CN.md" -Destination ".\dist\README_CN.md" -Force }
+        shell: pwsh
+
+      # [新增] 将 dist 文件夹打包成 zip，方便用户下载
+      - name: Zip Release Asset
+        # 仅在打 tag 时运行打包
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          $tagName = "${{ github.ref_name }}"
+          $zipName = "SCU-URP-Helper-Windows-$tagName.zip"
+          Compress-Archive -Path dist\* -DestinationPath $zipName
+          echo "RELEASE_ASSET=$zipName" >> $env:GITHUB_ENV
+        shell: pwsh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCU-URP-Helper-windows
+          path: dist
+
+      # [新增] 发布到 GitHub Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          # 指定要上传的文件（支持通配符）
-          files: |
-            my-app
-            *.tar.gz
-          # 是否自动生成发布日志（基于 commit message）
-          generate_release_notes: true
-          # 是否设为草稿（默认为 false）
-          draft: false
-          # 是否为预发布版本（默认为 false，可根据 tag 自动判断）
-          prerelease: false
+          files: ${{ env.RELEASE_ASSET }}
+          #如果你想让它自动生成 Release 说明（基于 commit 记录），保持默认即可
+          # draft: true # 如果你想先存为草稿手动发布，取消注释这行
+          # prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

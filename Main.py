@@ -12,6 +12,8 @@ from sys import argv
 
 # staticINF.print_log("Hint: If you want to start the feature to automaticly evaluate teachers, you should pass in the parameter E.", "INFO")
 
+staticINF.print_log("来 https://github.com/LittFlower/SCU-URP-Helper 点点 star 谢谢喵", "INFO")
+
 if not staticINF.MajorId:
     fetched_major = fetch_major_id(auto_save=True)
     if not fetched_major:
