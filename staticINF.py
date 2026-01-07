@@ -54,7 +54,7 @@ _config_candidates = [
 
 CONFIG_PATH = next((p for p in _config_candidates if os.path.exists(p)), _config_candidates[0])
 
-print_log(base_path, CONFIG_PATH)
+# print_log(base_path, CONFIG_PATH)
 
 def _load_config(path: str) -> dict:
     """
