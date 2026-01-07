@@ -116,7 +116,7 @@ pdm.lock
 src/
 tests/
 pyproject.toml
-
+debug_page.html
 
 config.json
 verify.jpg

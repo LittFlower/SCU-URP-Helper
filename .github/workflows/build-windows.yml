@@ -34,7 +34,7 @@ jobs:
             --onefile `
             --follow-imports `
             --include-package-data=ddddocr `
-            --windows-console-mode=win32 `
+            --windows-console-mode=force `
             --output-filename=SCU-URP-Helper.exe `
             Main.py
         shell: pwsh
