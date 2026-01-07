@@ -11,7 +11,6 @@ jobs:
   build:
     runs-on: windows-latest
 
-    # [新增] 设置环境变量，指定 Nuitka 缓存目录到工作区，方便 actions/cache 抓取
     env:
       NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka_cache
 
@@ -25,9 +24,6 @@ jobs:
           python-version: "3.10"
           cache: "pip"
 
-      # [新增] 配置 Nuitka 编译缓存
-      # key 包含了 requirements.txt 的哈希，依赖变更时会刷新缓存
-      # restore-keys 保证即使依赖变了，也能尽量复用旧缓存中的通用部分
       - name: Cache Nuitka Compilation
         uses: actions/cache@v4
         with:
@@ -42,16 +38,14 @@ jobs:
           pip install -r requirements.txt
         shell: pwsh
 
-      # [优化] Build exe with Nuitka
-      # 增加了 --enable-plugin=anti-bloat 减少不必要的库编译
+      # [修正] 增加了 --assume-yes-for-downloads 解决非交互式下载卡死问题
       - name: Build exe with Nuitka
         run: |
           python -m nuitka `
             --standalone `
             --onefile `
-            --follow-imports `
+            --assume-yes-for-downloads `
             --include-package-data=ddddocr `
-            --enable-plugin=anti-bloat `
             --output-filename=SCU-URP-Helper.exe `
             Main.py
         shell: pwsh
