@@ -20,20 +20,6 @@ yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic
 teacherEvaluate_url = "http://zhjw.scu.edu.cn/student/teachingEvaluation/newEvaluation/"
 evaluationTable_url = "http://zhjw.scu.edu.cn/student/teachingAssessment/evaluation/queryAll"
 
-if getattr(sys, 'frozen', False):
-    base_path = os.path.dirname(sys.executable)
-else:
-    base_path = os.path.dirname(os.path.abspath(__file__))
-
-_config_candidates = [
-    os.path.join(base_path, "config.json"),                 # exe/py所在目录
-    os.path.join(os.getcwd(), "config.json"),               # 当前工作目录
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json"),  # 源码所在目录
-]
-
-CONFIG_PATH = next((p for p in _config_candidates if os.path.exists(p)), _config_candidates[0])
-
-print_log(base_path, CONFIG_PATH)
 
 # TODO: 日志系统
 def print_log(message: str, level: str = "INFO") -> None:
@@ -54,6 +40,21 @@ def print_log(message: str, level: str = "INFO") -> None:
     }.get(lvl, "[*]")
     print(f"[{ts}]{prefix} {message}")
 
+
+if getattr(sys, 'frozen', False):
+    base_path = os.path.dirname(sys.executable)
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+_config_candidates = [
+    os.path.join(base_path, "config.json"),                 # exe/py所在目录
+    os.path.join(os.getcwd(), "config.json"),               # 当前工作目录
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json"),  # 源码所在目录
+]
+
+CONFIG_PATH = next((p for p in _config_candidates if os.path.exists(p)), _config_candidates[0])
+
+print_log(base_path, CONFIG_PATH)
 
 def _load_config(path: str) -> dict:
     """

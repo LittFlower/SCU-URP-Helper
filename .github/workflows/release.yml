@@ -1,4 +1,4 @@
-name: Build Windows EXE (Nuitka)
+name: release
 
 on:
   push:
