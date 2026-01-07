@@ -19,7 +19,12 @@ yzmPic_url = "http://zhjw.scu.edu.cn/student/courseSelect/selectCourse/getYzmPic
 teacherEvaluate_url = "http://zhjw.scu.edu.cn/student/teachingEvaluation/newEvaluation/"
 evaluationTable_url = "http://zhjw.scu.edu.cn/student/teachingAssessment/evaluation/queryAll"
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config.json")
+if getattr(sys, 'frozen', False):
+    base_path = os.path.dirname(sys.executable)
+else:
+    base_path = os.path.dirname(os.path.abspath(__file__))
+
+CONFIG_PATH = os.path.join(base_path, "config.json")
 
 # TODO: 日志系统
 def print_log(message: str, level: str = "INFO") -> None:

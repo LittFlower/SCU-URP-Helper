@@ -1,0 +1,47 @@
+name: Build and Release
+
+# 1. 触发条件：仅当推送以 'v' 开头的 tag 时触发 (如 v1.0.0)
+on:
+  push:
+    tags:
+      - "v*"
+
+# 2. 权限设置：必须赋予写权限，否则无法创建 Release
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # --- 这里是你的构建步骤 (示例) ---
+      - name: Set up Go (举例)
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Build Binary
+        run: |
+          # 假设构建生成了一个名为 my-app 的文件
+          go build -o my-app main.go
+          # 或者打包成压缩包
+          tar -czvf my-app-linux-amd64.tar.gz my-app
+      # ----------------------------------
+      # 3. 发布 Release 步骤
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          # 指定要上传的文件（支持通配符）
+          files: |
+            my-app
+            *.tar.gz
+          # 是否自动生成发布日志（基于 commit message）
+          generate_release_notes: true
+          # 是否设为草稿（默认为 false）
+          draft: false
+          # 是否为预发布版本（默认为 false，可根据 tag 自动判断）
+          prerelease: false

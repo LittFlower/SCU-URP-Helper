@@ -115,6 +115,8 @@ pdm.lock
 .pdm-build/
 src/
 tests/
+SCU-URP-Helper-windows/
+SCU-URP-Helper-windows.zip
 pyproject.toml
 debug_page.html
 
