@@ -11,6 +11,10 @@ jobs:
   build:
     runs-on: windows-latest
 
+    # [新增] 设置环境变量，指定 Nuitka 缓存目录到工作区，方便 actions/cache 抓取
+    env:
+      NUITKA_CACHE_DIR: ${{ github.workspace }}/.nuitka_cache
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,12 +25,25 @@ jobs:
           python-version: "3.10"
           cache: "pip"
 
+      # [新增] 配置 Nuitka 编译缓存
+      # key 包含了 requirements.txt 的哈希，依赖变更时会刷新缓存
+      # restore-keys 保证即使依赖变了，也能尽量复用旧缓存中的通用部分
+      - name: Cache Nuitka Compilation
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.NUITKA_CACHE_DIR }}
+          key: ${{ runner.os }}-nuitka-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-nuitka-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
         shell: pwsh
 
+      # [优化] Build exe with Nuitka
+      # 增加了 --enable-plugin=anti-bloat 减少不必要的库编译
       - name: Build exe with Nuitka
         run: |
           python -m nuitka `
@@ -34,7 +51,7 @@ jobs:
             --onefile `
             --follow-imports `
             --include-package-data=ddddocr `
-            --windows-console-mode=force `
+            --enable-plugin=anti-bloat `
             --output-filename=SCU-URP-Helper.exe `
             Main.py
         shell: pwsh
@@ -45,9 +62,11 @@ jobs:
           $exePath = Get-ChildItem -Recurse -Filter "SCU-URP-Helper.exe" | Select-Object -First 1
           if (-not $exePath) { throw "Executable not found after build." }
           Copy-Item -Path $exePath.FullName -Destination ".\dist\SCU-URP-Helper.exe" -Force
-          Copy-Item -Path ".\config.json.example" -Destination ".\dist\config.json" -Force
-          Copy-Item -Path ".\README.md" -Destination ".\dist\README.md" -Force
-          Copy-Item -Path ".\README_CN.md" -Destination ".\dist\README_CN.md" -Force
+          if (Test-Path ".\config.json.example") {
+              Copy-Item -Path ".\config.json.example" -Destination ".\dist\config.json" -Force
+          }
+          if (Test-Path ".\README.md") { Copy-Item -Path ".\README.md" -Destination ".\dist\README.md" -Force }
+          if (Test-Path ".\README_CN.md") { Copy-Item -Path ".\README_CN.md" -Destination ".\dist\README_CN.md" -Force }
         shell: pwsh
 
       - name: Upload artifact
