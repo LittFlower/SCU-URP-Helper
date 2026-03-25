@@ -4,9 +4,8 @@ on:
   push:
     tags:
       - "v*" # 仅当推送 v 开头的 tag 时触发发布 (如 v1.0.0)
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  # pull_request:
+  #   branches: [main, master]
   workflow_dispatch:
 
 # 必须添加这个权限，否则无法创建 Release
