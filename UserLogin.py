@@ -10,16 +10,6 @@ import ddddocr
 import requests
 
 
-def _dump_debug_html(file_name: str, content: str) -> None:
-    with open(file_name, "w", encoding="utf-8", errors="ignore") as html_file:
-        html_file.write(content)
-
-
-def _dump_debug_text(file_name: str, content: str) -> None:
-    with open(file_name, "w", encoding="utf-8", errors="ignore") as text_file:
-        text_file.write(content)
-
-
 def _extract_form_action(page_text: str) -> str:
     match = re.search(
         r'(?is)<form[^>]*action=["\']([^"\']+)["\']',
@@ -50,14 +40,21 @@ def _extract_hidden_inputs(page_text: str) -> dict[str, str]:
 
 
 def _extract_login_button_onclick(page_text: str) -> str:
-    match = re.search(
-        r'(?is)<input[^>]*id=["\']loginButton["\'][^>]*onclick=["\'](.*?)["\']',
+    button_match = re.search(
+        r'(?is)<input\b[^>]*\bid=["\']loginButton["\'][^>]*>',
         page_text,
     )
-    if not match:
+    if not button_match:
         return ""
 
-    return match.group(1)
+    onclick_match = re.search(
+        r'(?is)\bonclick\s*=\s*(["\'])(.*?)\1',
+        button_match.group(0),
+    )
+    if not onclick_match:
+        return ""
+
+    return onclick_match.group(2)
 
 
 def _extract_token(page_text: str) -> str:
@@ -115,7 +112,6 @@ def _detect_password_rule(page_text: str) -> Tuple[Optional[str], str]:
         return None, ""
 
     normalized = re.sub(r"\s+", "", onclick_code)
-    _dump_debug_text("debug_password_js.txt", onclick_code)
 
     double_md5_pattern = (
         r"hex_md5\(hex_md5\(\$\('#input_password'\)\.val\(\)(?:,'1\.8')?\)"
@@ -155,8 +151,12 @@ def _get_password_rules(page_text: str) -> list[str]:
 
 def _build_password(password_plain: str, rule_name: str) -> str:
     if rule_name == "double_md5_pair":
-        double_md5 = _md5_hex(_md5_hex(password_plain))
-        return double_md5 + "*" + double_md5
+        # 对齐教务系统当前前端逻辑：
+        # hex_md5(hex_md5(pwd), '1.8') + '*' + hex_md5(hex_md5(pwd, '1.8'), '1.8')
+        # 其中 hex_md5(x)（未传 '1.8'）等价于 md5(x + '{Urp602019}')
+        left_part = _md5_hex(_md5_hex(password_plain + "{Urp602019}"))
+        right_part = _md5_hex(_md5_hex(password_plain))
+        return left_part + "*" + right_part
 
     if rule_name == "legacy_magic_md5_pair":
         magic_str = "{Urp602019}"
@@ -180,7 +180,6 @@ def userlogin(_http_main: requests.session) -> requests.session:
             print_log(f"[登录未成功]：无法打开登录页，状态码={res.status_code}")
             login_attempts += 1
             continue
-        _dump_debug_html("debug_login_page.html", res.text)
 
         action_url = _extract_form_action(res.text)
         hidden_inputs = _extract_hidden_inputs(res.text)
@@ -217,7 +216,6 @@ def userlogin(_http_main: requests.session) -> requests.session:
             data=current_login_data,
             headers=login_headers,
         )
-        _dump_debug_html("debug_login_response.html", res.text)
 
         if _is_login_success(res.text, res.url):
             print_log("[已成功登录]：成功登录系统")
